@@ -1,4 +1,5 @@
 using DatingApp.Data;
+using DatingApp.Entities;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -36,32 +37,50 @@ namespace DatingApp
             });
 
             services.AddControllers();
-            services.AddSwaggerGen(c =>
+            services.AddCors();
+            /* services.AddSwaggerGen(c =>
+             {
+                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "DatingApp", Version = "v1" });
+             });
+
+            services.AddSpaStaticFiles(Configuration =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "DatingApp", Version = "v1" });
-            });
+                Configuration.RootPath = "client/dist";
+            });*/
+            //services.AddTransient<DataSeeder>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)//DataSeeder dataSeeder
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "DatingApp v1"));
+                /*  app.UseSwagger();
+                  app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "DatingApp v1"));
+
+              }
+              app.UseSpa(spa =>
+              {
+                  spa.Options.SourcePath = "client"; // Adjust the path to your Angular app
+                  spa.UseProxyToSpaDevelopmentServer("http://localhost:4200");
+              });*/
+
+                app.UseHttpsRedirection();
+
+                app.UseRouting();
+
+                app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:4200")); //make the app run on the same port
+
+                app.UseAuthorization();
+                //dataSeeder.SeedData();
+
+                app.UseEndpoints(endpoints =>
+                {
+                    endpoints.MapControllers();
+                });
             }
-
-            app.UseHttpsRedirection();
-
-            app.UseRouting();
-
-            app.UseAuthorization();
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
         }
     }
 }

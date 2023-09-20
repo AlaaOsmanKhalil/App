@@ -29,5 +29,14 @@ namespace DatingApp.Controllers
         {
             return await _Context.Users.FindAsync(id); ;
         }
+
+        [HttpPost] // HTTP POST endpoint to add a new user
+        public async Task<ActionResult<AppUser>> AddUser(AppUser user)
+        {
+            _Context.Users.Add(user); // Add the new user to the context
+            await _Context.SaveChangesAsync(); // Save changes to the database
+
+            return CreatedAtAction(nameof(GetUserById), new { id = user.Id }, user);
+        }
     }
 }
